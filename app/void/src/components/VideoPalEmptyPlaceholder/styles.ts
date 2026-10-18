@@ -1,0 +1,118 @@
+import {StyleSheet} from 'react-native';
+import {Theme} from '../../utils/types';
+
+export const createStyles = ({theme}: {theme: Theme}) =>
+  StyleSheet.create({
+    container: {
+      alignItems: 'center',
+      paddingHorizontal: 24,
+      paddingTop: 16,
+      gap: 14,
+      minHeight: 400,
+    },
+    reticleWrapper: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginVertical: 4,
+    },
+    hudBadgeContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      backgroundColor: '#181714',
+      borderWidth: 1,
+      borderColor: 'rgba(224, 220, 208, 0.22)',
+      borderRadius: 3,
+    },
+    triBar: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 3,
+    },
+    barBlue: {
+      width: 4,
+      height: 12,
+      backgroundColor: '#7A96B2',
+      borderRadius: 1,
+    },
+    barYellow: {
+      width: 4,
+      height: 12,
+      backgroundColor: '#FFFFFF',
+      borderRadius: 1,
+    },
+    barRed: {
+      width: 4,
+      height: 12,
+      backgroundColor: '#FF2035',
+      borderRadius: 1,
+    },
+    badgeTag: {
+      fontFamily: 'Ndot-57',
+      fontSize: 12,
+      letterSpacing: 1.8,
+      color: '#36D6A8',
+      textTransform: 'uppercase',
+    },
+    content: {
+      alignItems: 'center',
+      gap: 8,
+      maxWidth: 340,
+    },
+    title: {
+      color: '#FFFFFF',
+      textAlign: 'center',
+      letterSpacing: 1.2,
+      textTransform: 'uppercase',
+      fontWeight: '800',
+      fontSize: 16,
+    },
+    subtitle: {
+      color: '#A0A5AE',
+      textAlign: 'center',
+      fontSize: 12,
+      fontWeight: '700',
+      letterSpacing: 1,
+      textTransform: 'uppercase',
+    },
+    experimentalNotice: {
+      backgroundColor: '#261A1D',
+      borderRadius: 3,
+      borderWidth: 1,
+      borderColor: 'rgba(200, 102, 118, 0.4)',
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      marginVertical: 4,
+      maxWidth: '100%',
+    },
+    experimentalText: {
+      color: '#E8A0AD',
+      textAlign: 'center',
+      fontSize: 11,
+      fontWeight: '600',
+    },
+    instructionsContainer: {
+      width: '100%',
+      backgroundColor: '#181714',
+      borderWidth: 1,
+      borderColor: 'rgba(224, 220, 208, 0.16)',
+      borderRadius: 4,
+      padding: 12,
+      gap: 4,
+    },
+    instructionsTitle: {
+      color: '#E0DCD0',
+      marginBottom: 4,
+      fontSize: 12,
+      fontWeight: '800',
+      letterSpacing: 1,
+      textTransform: 'uppercase',
+    },
+    instructionStep: {
+      color: '#8A9AAA',
+      fontSize: 11,
+      lineHeight: 16,
+    },
+  });

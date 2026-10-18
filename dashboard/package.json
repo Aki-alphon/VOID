@@ -1,0 +1,11 @@
+{
+  "name": "void-operator-hud",
+  "version": "2.0.0",
+  "description": "Autonomous VOID OS Neural Operator HUD for ROVE (XIAO ESP32-S3 Sense)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": ["void", "rove", "esp32s3", "hud", "black-hole", "ai-companion"],
+  "license": "MIT"
+}

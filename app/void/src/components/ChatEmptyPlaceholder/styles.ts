@@ -1,0 +1,102 @@
+import {StyleSheet} from 'react-native';
+import {Theme} from '../../utils/types';
+
+export const createStyles = ({theme}: {theme: Theme}) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingHorizontal: 20,
+      gap: 12,
+    },
+    heroStage: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      position: 'relative',
+      marginVertical: 0,
+      overflow: 'hidden',
+    },
+    hudBadgeContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      paddingHorizontal: 12,
+      paddingVertical: 5,
+      backgroundColor: '#181714',
+      borderWidth: 1,
+      borderColor: 'rgba(224, 220, 208, 0.22)',
+      borderRadius: 4,
+    },
+    triBar: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 3,
+    },
+    barBlue: {
+      width: 3.5,
+      height: 12,
+      backgroundColor: '#7A96B2',
+      borderRadius: 1,
+    },
+    barYellow: {
+      width: 3.5,
+      height: 12,
+      backgroundColor: '#FFFFFF',
+      borderRadius: 1,
+    },
+    barRed: {
+      width: 3.5,
+      height: 12,
+      backgroundColor: '#FF2035',
+      borderRadius: 1,
+    },
+    badgeTag: {
+      fontFamily: 'Ndot-57',
+      fontSize: 12,
+      letterSpacing: 2.0,
+      color: '#FFFFFF',
+      textTransform: 'uppercase',
+    },
+    textContainer: {
+      alignItems: 'center',
+      maxWidth: 340,
+    },
+    title: {
+      fontFamily: 'Inter-Bold',
+      color: '#FFFFFF',
+      textAlign: 'center',
+      marginBottom: 6,
+      letterSpacing: 1.2,
+      textTransform: 'uppercase',
+      fontWeight: '800',
+      fontSize: 16,
+    },
+    description: {
+      fontFamily: 'Inter-Regular',
+      color: '#A0A5AE',
+      textAlign: 'center',
+      fontSize: 13,
+      lineHeight: 19,
+      letterSpacing: 0.3,
+    },
+    button: {
+      minWidth: 200,
+      backgroundColor: '#FFFFFF',
+      borderWidth: 0,
+      borderRadius: 6,
+      elevation: 4,
+      shadowColor: '#000000',
+      shadowOffset: {width: 0, height: 2},
+      shadowOpacity: 0.35,
+      shadowRadius: 4,
+    },
+    buttonLabel: {
+      fontFamily: 'Inter-Bold',
+      color: '#000000',
+      fontWeight: '800',
+      letterSpacing: 1.4,
+      fontSize: 13,
+      textTransform: 'uppercase',
+    },
+  });

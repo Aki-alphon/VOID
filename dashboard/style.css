@@ -1,0 +1,1188 @@
+/* ==========================================================================
+   PROJECT VOID OS // NEURAL OPERATOR & ROVE HARDWARE HUD
+   - Palette: Dark Warm Void + Off-White Ivory + Steel Blue + Amber Mustard + Dusty Rose
+   - Texture: Halftone dot-matrix grid, mecha panel-line borders
+   - Dynamic Quantum Dot-Matrix Singularity Core (Amber + Steel Blue)
+   ========================================================================== */
+
+@font-face {
+  font-family: 'Ndot-57';
+  src: url('Ndot57-Regular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'NType-82';
+  src: url('NType82-Regular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+:root {
+  /* === GUNDAM RX-78-2 MECHA PALETTE === */
+
+  /* Backgrounds — Dark warm void like the night sky behind a mobile suit */
+  --nt-void: #0C0B0A;
+  --nt-charcoal-deep: #131210;
+  --nt-charcoal: #1C1A16;
+  --nt-charcoal-card: rgba(22, 20, 15, 0.92);
+  --nt-charcoal-glass: rgba(30, 28, 20, 0.78);
+
+  /* Panel-line borders — thin ink strokes on mecha armor */
+  --nt-border: rgba(220, 212, 190, 0.16);
+  --nt-border-subtle: rgba(220, 212, 190, 0.07);
+  --nt-border-active: rgba(200, 144, 24, 0.92);
+
+  /* === TEXT COLORS === */
+  --nt-white: #E0DCD0;            /* Main body off-white armor panel */
+  --nt-silver: #8A9AAA;           /* Steel blue-grey — chest torso tint */
+  --nt-muted: #4A4840;            /* Shadow panel lines — dark ink */
+
+  /* === MECHA ACCENT SYSTEM === */
+
+  /* PRIMARY: Amber Mustard — Gundam collar/core (#C89018) */
+  --nt-red: #C89018;
+  --nt-red-hot: #DCA020;
+  --nt-red-glow: rgba(200, 144, 24, 0.50);
+  --nt-red-dim: rgba(200, 144, 24, 0.10);
+  --nt-red-surface: rgba(38, 28, 6, 0.70);
+
+  /* SECONDARY: Steel Blue-Grey — torso/shoulder armor (#8BA0B8) */
+  --nt-steel: #8BA0B8;
+  --nt-steel-hot: #A4BCE0;
+  --nt-steel-glow: rgba(139, 160, 184, 0.50);
+  --nt-steel-dim: rgba(139, 160, 184, 0.10);
+  --nt-steel-surface: rgba(12, 20, 32, 0.65);
+
+  /* ALERT: Dusty Rose Brick — knee/lower armor (#B05868) */
+  --nt-crimson: #B05868;
+  --nt-crimson-glow: rgba(176, 88, 104, 0.50);
+  --nt-crimson-surface: rgba(32, 10, 14, 0.65);
+
+  /* SENSOR: Mono-eye Acid Green — T.A.R.S. eye indicator */
+  --nt-green: #00CC44;
+  --nt-green-glow: rgba(0, 204, 68, 0.45);
+
+  /* Crisp, Modern Mecha Technical Typography (High Legibility) */
+  --font-ndot: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-sans: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'Space Grotesk', monospace;
+  --font-clock: 'Ndot-57', 'Space Grotesk', monospace;
+
+  /* Geometry — sharper, more angular for mecha feel */
+  --radius-pod: 4px;
+  --radius-card: 4px;
+  --radius-chip: 3px;
+  --radius-button: 3px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #100F0E;
+  color: #E0DCD0;
+  font-family: var(--font-sans);
+}
+
+/* Gundam Cockpit Dot-Matrix & Blueprint Drafting Grid */
+.dot-matrix-bg {
+  position: absolute;
+  inset: 0;
+  background-color: #100F0E;
+  background-image:
+    radial-gradient(circle, rgba(224, 220, 208, 0.08) 1.2px, transparent 1.2px),
+    linear-gradient(rgba(224, 220, 208, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(224, 220, 208, 0.035) 1px, transparent 1px);
+  background-size: 16px 16px, 64px 64px, 64px 64px;
+  background-position: 0 0, 0 0, 0 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ==================== ANDROID VIEWPORT CONTAINER ==================== */
+.hud-frame {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  overflow: hidden;
+  z-index: 2;
+}
+
+/* ==================== MINIMAL ANDROID STATUS BAR ==================== */
+.android-status-bar {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  background: transparent;
+  z-index: 30;
+}
+
+.status-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.status-clock {
+  font-family: var(--font-ndot);
+  font-size: 1.15rem;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  color: var(--nt-white);
+  text-shadow: 0 0 10px rgba(212, 201, 168, 0.45);
+}
+
+.top-apps-hub-btn {
+  background: #181714;
+  border: 1.5px solid rgba(224, 220, 208, 0.22);
+  border-radius: 3px;
+  padding: 5px 12px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  outline: none;
+  color: #E0DCD0;
+  box-shadow: 2px 2px 0px #000000;
+  transition: all 0.15s ease;
+}
+
+.top-apps-hub-btn:hover {
+  background: #201E1A;
+  border-color: #E5A21E;
+  color: #FFFFFF;
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px #000000;
+}
+
+.top-apps-hub-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0px #000000;
+}
+
+.top-matrix-glyph {
+  width: 14px;
+  height: 14px;
+  color: #E0DCD0;
+}
+
+.hub-text {
+  font-family: 'Space Grotesk', -apple-system, sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 1.5px;
+  font-weight: 800;
+  color: inherit;
+}
+
+.status-camera-notch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.punch-hole-lens {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #020203;
+  border: 1.5px solid rgba(255, 255, 255, 0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.9), 0 0 4px rgba(0, 0, 0, 0.6);
+  position: relative;
+}
+.lens-glass {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #2a334d 0%, #0d1117 75%);
+}
+.lens-sensor {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.status-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.glyph-icon-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.dot-svg {
+  width: 17px; height: 17px;
+  filter: drop-shadow(0 0 3px rgba(200, 136, 48, 0.40));
+}
+.dot-svg circle {
+  transition: all 0.2s ease;
+}
+
+/* Dot-matrix Battery Capsule */
+.battery-capsule {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.battery-pct {
+  font-family: var(--font-ndot);
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--nt-white);
+  letter-spacing: 1px;
+}
+.dot-battery-pill {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(200, 136, 48, 0.05);
+  border: 1.5px dotted rgba(212, 201, 168, 0.20);
+  padding: 3px 6px;
+  border-radius: 6px;
+}
+.bat-dot {
+  width: 4px; height: 8px;
+  border-radius: 1px;
+  background: rgba(212, 201, 168, 0.15);
+}
+.bat-dot.active {
+  background: var(--nt-white);
+  box-shadow: 0 0 4px rgba(212, 201, 168, 0.6);
+}
+.bat-dot.active.red {
+  background: var(--nt-red);
+  box-shadow: 0 0 6px var(--nt-red-glow);
+}
+
+/* ==================== CLEAN HERO STAGE ==================== */
+.hud-stage {
+  flex: 1;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+}
+
+.singularity-container {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: grab;
+}
+.singularity-container:active {
+  cursor: grabbing;
+}
+
+#singularityCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ==================== MINIMAL BOTTOM DOCK ==================== */
+.hud-footer {
+  height: 98px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px 8px 20px;
+  background: transparent;
+  z-index: 30;
+}
+
+.tactical-dock {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 22px;
+  width: 100%;
+  max-width: 440px;
+  padding: 6px 12px;
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.dock-item {
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.dock-item:hover { transform: translateY(-4px) scale(1.08); }
+.dock-item:active { transform: translateY(0) scale(0.95); }
+
+/* ==================== CLEAN FLOATING NOTHING GLYPH ICONS ==================== */
+.glyph-matrix-svg {
+  width: 32px;
+  height: 32px;
+  overflow: visible;
+  transition: transform 0.22s ease, filter 0.22s ease;
+}
+
+.dock-item:hover .glyph-matrix-svg {
+  transform: translateY(-3px) scale(1.10);
+}
+
+.dock-item.active-glow .glyph-matrix-svg {
+  transform: translateY(-3px) scale(1.10);
+  filter: drop-shadow(0 0 10px rgba(200, 136, 48, 0.7));
+}
+
+/* Micro-LED Phosphor Dot Classes (Cream Ivory) */
+.g-dot-on {
+  fill: #D4C9A8;
+  filter: drop-shadow(0 0 2px rgba(212, 201, 168, 0.8));
+  transition: all 0.2s ease;
+}
+.dock-item:hover .g-dot-on {
+  fill: #E8DFC0;
+  filter: drop-shadow(0 0 4px rgba(212, 201, 168, 0.9));
+}
+
+.g-dot-dim {
+  fill: rgba(212, 201, 168, 0.22);
+  transition: all 0.2s ease;
+}
+.dock-item:hover .g-dot-dim {
+  fill: rgba(212, 201, 168, 0.48);
+}
+
+.g-dot-red {
+  fill: var(--nt-red);
+  filter: drop-shadow(0 0 4px var(--nt-red));
+  transition: all 0.2s ease;
+}
+.dock-item:hover .g-dot-red,
+.dock-item.active-glow .g-dot-red {
+  filter: drop-shadow(0 0 8px var(--nt-red-glow));
+}
+
+.dock-name {
+  font-family: var(--font-ndot);
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--nt-muted);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+.dock-item:hover .dock-name,
+.dock-item.active-glow .dock-name {
+  color: var(--nt-white);
+  text-shadow: 0 0 8px rgba(200, 136, 48, 0.5);
+}
+
+/* ==================== ANDROID GESTURE NAVIGATION PILL ==================== */
+.android-nav-bar {
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  padding-bottom: 6px;
+  z-index: 30;
+}
+.nav-gesture-pill {
+  width: 110px; height: 4px;
+  background: rgba(212, 201, 168, 0.20);
+  border-radius: 4px;
+  transition: background 0.2s ease, width 0.2s ease;
+  cursor: pointer;
+}
+.nav-gesture-pill:hover {
+  background: var(--nt-red);
+  box-shadow: 0 0 8px var(--nt-red-glow);
+}
+
+/* ==================== TACTICAL MODAL WINDOWS ==================== */
+.tactical-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(7, 8, 10, 0.8);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  z-index: 100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  transition: opacity 0.22s ease;
+}
+.tactical-modal.open {
+  display: flex;
+  opacity: 1;
+}
+
+.modal-frame {
+  width: 100%;
+  max-width: 680px;
+  max-height: 85vh;
+  position: relative;
+  background: #121110;
+  background-image:
+    radial-gradient(circle, rgba(224, 220, 208, 0.08) 1.2px, transparent 1.2px),
+    linear-gradient(rgba(224, 220, 208, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(224, 220, 208, 0.03) 1px, transparent 1px);
+  background-size: 14px 14px, 28px 28px, 28px 28px;
+  border: 1.5px solid rgba(224, 220, 208, 0.22);
+  border-radius: 0;
+  clip-path: polygon(14px 0, calc(100% - 14px) 0, 100% 14px, 100% calc(100% - 14px), calc(100% - 14px) 100%, 14px 100%, 0 calc(100% - 14px), 0 14px);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.90),
+    0 0 0 1px rgba(224, 220, 208, 0.08),
+    inset 0 0 30px rgba(8, 8, 7, 0.85);
+  color: #E0DCD0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modalEnter 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-corner-bracket {
+  display: none;
+}
+
+.status-indicator-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Space Grotesk', monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  color: #8BA0B8;
+  margin-right: 12px;
+}
+.status-indicator-live .live-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #36D6A8;
+  box-shadow: 0 0 6px #36D6A8;
+}
+
+.modal-header {
+  height: 52px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1.5px solid rgba(224, 220, 208, 0.18);
+  background: #181714;
+}
+
+.modal-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Space Grotesk', -apple-system, sans-serif;
+  font-size: 0.86rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #E0DCD0;
+}
+.red-bar {
+  width: 4px;
+  height: 16px;
+  background: #E5A21E;
+  border: 1px solid rgba(224, 220, 208, 0.4);
+  border-radius: 1px;
+}
+.badge-tag {
+  font-family: 'Space Grotesk', monospace;
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #121110;
+  background: #E5A21E;
+  border: 1px solid rgba(224, 220, 208, 0.4);
+  padding: 2px 7px;
+  border-radius: 2px;
+}
+
+.modal-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.modal-btn {
+  background: #1E1D19;
+  border: 1.5px solid rgba(224, 220, 208, 0.22);
+  color: #E0DCD0;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 6px 12px;
+  border-radius: 3px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 #000000;
+  transition: all 0.15s ease;
+}
+.modal-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 #000000;
+  background: #242017;
+  border-color: #E5A21E;
+  color: #FFFFFF;
+}
+.modal-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 #000000;
+}
+
+.modal-close {
+  background: #1E1D19;
+  border: 1.5px solid rgba(224, 220, 208, 0.25);
+  color: #E0DCD0;
+  width: 28px;
+  height: 28px;
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Space Grotesk', monospace;
+  font-weight: 800;
+  font-size: 0.90rem;
+  box-shadow: 2px 2px 0 #000000;
+  transition: all 0.15s ease;
+}
+.modal-close:hover {
+  background: #C86676;
+  border-color: #C86676;
+  color: #FFFFFF;
+  box-shadow: 3px 3px 0 #000000;
+}
+.modal-close:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 #000000;
+}
+
+.modal-body {
+  padding: 22px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Camera Modal Feed */
+.cam-viewport-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1.5px dotted var(--nt-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cam-viewport-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.camera-hud-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.cam-stream-meta {
+  position: absolute;
+  bottom: 12px; left: 14px;
+  font-family: var(--font-ndot);
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px dotted rgba(255, 255, 255, 0.2);
+}
+.cam-controls-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+.cam-ctrl-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+.cam-ctrl-item label {
+  font-family: var(--font-ndot);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--nt-silver);
+  letter-spacing: 1px;
+}
+.cam-ctrl-item input[type="range"] {
+  accent-color: var(--nt-red);
+}
+.toggle-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px dotted var(--nt-border);
+  color: var(--nt-silver);
+  font-family: var(--font-ndot);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.toggle-btn.active {
+  background: var(--nt-red);
+  color: #fff;
+  border-color: var(--nt-red);
+}
+
+/* ==================== VINTAGE HKO CRT PHOSPHOR RADAR SCOPE ==================== */
+.rf-radar-body {
+  padding: 18px 22px;
+}
+.vintage-ppi-wrapper {
+  position: relative;
+  width: 100%;
+  background: #040404;
+  border: 1.5px solid rgba(224, 220, 208, 0.22);
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.95), 0 8px 24px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0;
+}
+.vintage-ppi-wrapper canvas {
+  width: 100%;
+  max-width: 540px;
+  height: auto;
+  aspect-ratio: 560 / 480;
+  display: block;
+}
+
+/* Vintage Observatory Camera Watermark / Stamp */
+.ppi-vintage-stamp {
+  position: absolute;
+  top: 14px;
+  left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-family: 'Space Grotesk', monospace;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: rgba(224, 220, 208, 0.32);
+  pointer-events: none;
+}
+
+/* Radar Specs Overlay at Bottom */
+.ppi-specs-overlay {
+  position: absolute;
+  bottom: 12px;
+  left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-family: 'Space Grotesk', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 1px;
+  color: rgba(224, 220, 208, 0.22);
+  pointer-events: none;
+}
+
+/* ==================== PROFESSIONAL TACTICAL COMMS & TRANSMISSION LOGS ==================== */
+.comms-matrix-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 8px 12px;
+  background: #171613;
+  border: 1px solid rgba(224, 220, 208, 0.12);
+  border-radius: 3px;
+  margin-bottom: 14px;
+}
+.matrix-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Space Grotesk', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 1px;
+}
+.matrix-chip .chip-k {
+  color: #8E8A7E;
+  font-weight: 700;
+}
+.matrix-chip .chip-v {
+  color: #E5A21E;
+  font-weight: 800;
+}
+
+.chat-logs-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 260px;
+  max-height: 380px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+/* Structured Transmission Card */
+.transmission-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 3px;
+  padding: 10px 14px;
+  max-width: 92%;
+  box-shadow: 2px 2px 0px #000000;
+  transition: transform 0.15s ease;
+}
+.transmission-card.void-log {
+  align-self: flex-start;
+  background: #181714;
+  background-image: radial-gradient(circle, rgba(224, 220, 208, 0.04) 1px, transparent 1px);
+  background-size: 8px 8px;
+  border: 1.5px solid rgba(224, 220, 208, 0.18);
+  border-left: 3.5px solid #7A96B2; /* Steel blue transmission stripe */
+}
+.transmission-card.operator-log {
+  align-self: flex-end;
+  background: #20171A;
+  border: 1.5px solid rgba(200, 102, 118, 0.40);
+  border-right: 3.5px solid #C86676; /* Rose red operator transmission stripe */
+}
+
+.trans-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(224, 220, 208, 0.08);
+}
+.trans-identity {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.trans-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+.trans-indicator.ind-void {
+  background: #36D6A8;
+  box-shadow: 0 0 6px #36D6A8;
+}
+.trans-indicator.ind-operator {
+  background: #E5A21E;
+  box-shadow: 0 0 6px #E5A21E;
+}
+.trans-label {
+  font-family: 'Space Grotesk', -apple-system, sans-serif;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  color: #A4BCE0;
+}
+.transmission-card.operator-log .trans-label {
+  color: #E68898;
+}
+.trans-time {
+  font-family: 'Space Grotesk', monospace;
+  font-size: 0.62rem;
+  color: #8E8A7E;
+  letter-spacing: 1px;
+}
+
+.trans-body {
+  font-family: 'Space Grotesk', -apple-system, sans-serif;
+  font-size: 0.86rem;
+  font-weight: 500;
+  line-height: 1.55;
+  color: #E0DCD0;
+  word-break: break-word;
+}
+.transmission-card.operator-log .trans-body {
+  color: #FFFFFF;
+}
+
+/* Command Console Input Bar */
+.chat-input-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  background: #141310;
+  border: 1.5px solid rgba(224, 220, 208, 0.22);
+  border-radius: 3px;
+  padding: 4px 6px 4px 12px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
+  transition: border-color 0.15s ease;
+}
+.chat-input-bar:focus-within {
+  border-color: #E5A21E;
+}
+.cmd-prompt-prefix {
+  font-family: 'Space Grotesk', monospace;
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #E5A21E;
+  letter-spacing: 1px;
+}
+.chat-input-bar input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #FFFFFF;
+  font-family: 'Space Grotesk', -apple-system, sans-serif;
+  font-size: 0.86rem;
+  font-weight: 500;
+  padding: 8px 4px;
+}
+.chat-input-bar input::placeholder {
+  color: #6E6A60;
+  font-size: 0.82rem;
+}
+.chat-send-btn {
+  background: #E5A21E;
+  border: 1.5px solid #000000;
+  color: #121110;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 800;
+  font-size: 0.74rem;
+  letter-spacing: 1.2px;
+  padding: 7px 16px;
+  border-radius: 2px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0px #000000;
+  transition: all 0.15s ease;
+}
+.chat-send-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px #000000;
+  background: #FFB52E;
+}
+.chat-send-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0px #000000;
+}
+
+/* ==================== GUNDAM RX-78-2 CHARCOAL + DOT-MATRIX MECHA DRAWER ==================== */
+.drawer-modal .drawer-frame.mecha-blueprint-frame {
+  max-width: 600px;
+  background: #121110;
+  background-image:
+    radial-gradient(circle, rgba(224, 220, 208, 0.09) 1.2px, transparent 1.2px),
+    linear-gradient(rgba(224, 220, 208, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(224, 220, 208, 0.03) 1px, transparent 1px);
+  background-size: 12px 12px, 24px 24px, 24px 24px;
+  border: 1.5px solid rgba(224, 220, 208, 0.22);
+  border-radius: 0;
+  clip-path: polygon(14px 0, calc(100% - 14px) 0, 100% 14px, 100% calc(100% - 14px), calc(100% - 14px) 100%, 14px 100%, 0 calc(100% - 14px), 0 14px);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.90),
+    0 0 0 1px rgba(224, 220, 208, 0.08),
+    inset 0 0 40px rgba(8, 8, 7, 0.85);
+  color: #E0DCD0;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Mecha Technical Header */
+.mecha-drawer-header {
+  height: 52px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #181714;
+  border-bottom: 1.5px solid rgba(224, 220, 208, 0.18);
+}
+
+.mecha-drawer-header .modal-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'Space Grotesk', -apple-system, sans-serif;
+  font-size: 0.86rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #E0DCD0;
+}
+
+/* Gundam RX-78-2 Tricolor Stripe: Blue, Yellow, Red */
+.gundam-tri-bar {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+}
+.gundam-tri-bar .bar-blue {
+  width: 5px; height: 16px; background: #7A96B2; border: 1px solid rgba(224, 220, 208, 0.35); border-radius: 1px;
+}
+.gundam-tri-bar .bar-yellow {
+  width: 5px; height: 16px; background: #E5A21E; border: 1px solid rgba(224, 220, 208, 0.35); border-radius: 1px;
+}
+.gundam-tri-bar .bar-red {
+  width: 5px; height: 16px; background: #C86676; border: 1px solid rgba(224, 220, 208, 0.35); border-radius: 1px;
+}
+
+.mecha-spec-tag {
+  font-family: 'Space Grotesk', monospace;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  background: #E5A21E;
+  color: #121110;
+  border: 1px solid rgba(224, 220, 208, 0.4);
+  padding: 2px 7px;
+  border-radius: 2px;
+}
+
+.mecha-close {
+  background: #1E1D19;
+  border: 1px solid rgba(224, 220, 208, 0.25);
+  color: #E0DCD0;
+  width: 28px; height: 28px;
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Space Grotesk', monospace;
+  font-weight: 800;
+  font-size: 0.90rem;
+  transition: all 0.15s ease;
+}
+.mecha-close:hover {
+  background: #C86676;
+  color: #FFFFFF;
+  border-color: #C86676;
+  box-shadow: 0 0 10px rgba(200, 102, 118, 0.5);
+}
+
+/* Drawer Body */
+.mecha-drawer-body {
+  padding: 22px;
+}
+
+/* 2 Rows x 3 Columns Clean Grid */
+.mecha-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+/* The Gundam RX-78-2 Charcoal Dot-Matrix Cards */
+.mecha-card {
+  background: #181714;
+  background-image: radial-gradient(circle, rgba(224, 220, 208, 0.06) 1px, transparent 1px);
+  background-size: 8px 8px;
+  border: 1.5px solid rgba(224, 220, 208, 0.20);
+  border-radius: 3px;
+  padding: 14px 10px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  outline: none;
+  position: relative;
+  transition: all 0.16s cubic-bezier(0.2, 0, 0, 1);
+  box-shadow: 3px 3px 0px #000000;
+}
+
+/* Color tabs on top of each mecha card */
+.mecha-card.theme-mint {
+  border-top: 3.5px solid #36D6A8;
+}
+.mecha-card.theme-yellow {
+  border-top: 3.5px solid #E5A21E;
+}
+.mecha-card.theme-blue {
+  border-top: 3.5px solid #7A96B2;
+}
+.mecha-card.theme-red {
+  border-top: 3.5px solid #C86676;
+}
+
+/* Stencil code & punch rivet header */
+.card-stencil-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px;
+}
+.card-code {
+  font-family: 'Space Grotesk', monospace;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #8E8A7E;
+}
+.card-rivet {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  border: 1px solid rgba(224, 220, 208, 0.3);
+  background: #282622;
+}
+
+/* Mechanical SVG Glyph */
+.mecha-card .card-glyph-wrap {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mecha-ink-glyph {
+  width: 44px;
+  height: 44px;
+  color: #E0DCD0;
+  transition: transform 0.16s ease;
+}
+
+/* Card App Name */
+.mecha-card .card-info {
+  width: 100%;
+  text-align: center;
+}
+.mecha-card .app-name {
+  font-family: 'Space Grotesk', -apple-system, sans-serif;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #E0DCD0;
+  text-transform: uppercase;
+  transition: color 0.15s ease;
+}
+
+/* Authentic Mechanical 3D Button Hover (Physical Tactile Offset) */
+.mecha-card:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 6px 6px 0px #000000;
+  background: #201E1A;
+  border-color: rgba(224, 220, 208, 0.40);
+}
+.mecha-card:hover .mecha-ink-glyph {
+  transform: scale(1.08);
+}
+
+.mecha-card.theme-mint:hover .app-name {
+  color: #36D6A8;
+}
+.mecha-card.theme-yellow:hover .app-name {
+  color: #E5A21E;
+}
+.mecha-card.theme-blue:hover .app-name {
+  color: #8BA0B8;
+}
+.mecha-card.theme-red:hover .app-name {
+  color: #C86676;
+}
+
+/* Active pressed state — button physically clicks down into chassis */
+.mecha-card:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px #000000;
+}
+
+/* ==================== RESPONSIVE ADAPTATIONS ==================== */
+@media (max-width: 600px) {
+  .android-status-bar {
+    padding: 0 14px;
+    height: 42px;
+  }
+  .tactical-modal {
+    padding: 10px;
+  }
+  .modal-frame {
+    max-height: 94vh;
+  }
+  .modal-header {
+    height: 46px;
+    padding: 0 14px;
+  }
+  .modal-title {
+    font-size: 0.72rem;
+    gap: 6px;
+    letter-spacing: 1px;
+  }
+  .badge-tag {
+    font-size: 0.56rem;
+    padding: 2px 6px;
+  }
+  .status-indicator-live {
+    font-size: 0.58rem;
+    margin-right: 6px;
+  }
+  .mecha-drawer-body {
+    padding: 14px;
+  }
+  .mecha-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .mecha-card {
+    padding: 10px 8px;
+    gap: 8px;
+  }
+  .mecha-card .card-glyph-wrap {
+    width: 40px;
+    height: 40px;
+  }
+  .mecha-ink-glyph {
+    width: 36px;
+    height: 36px;
+  }
+  .mecha-card .app-name {
+    font-size: 0.68rem;
+    letter-spacing: 1px;
+  }
+}

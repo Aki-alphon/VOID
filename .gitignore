@@ -1,0 +1,142 @@
+# ==============================================================================
+# VOID Root .gitignore
+# Covers: PlatformIO (ESP32), React Native (Android / iOS), Node.js, Web & OS
+# ==============================================================================
+
+# --- Operating System ---
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+[Dd]esktop.ini
+*~
+*.swp
+*.swo
+*.bak
+*.save
+
+# --- PlatformIO / Embedded C++ ---
+.pio/
+.pioenvs/
+.piolibdeps/
+.clangd/
+*.hex
+*.bin
+*.elf
+
+# --- Node.js & Package Managers ---
+node_modules/
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+package-lock.json
+.yarn/
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# --- Build Outputs & Binaries ---
+build/
+**/build/
+dist/
+**/dist/
+*.apk
+*.aab
+*.ipa
+*.jsbundle
+*.hprof
+*.pyc
+__pycache__/
+
+# --- Compressed Archives ---
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+
+# --- Android / Gradle ---
+.gradle/
+**/.gradle/
+.cxx/
+**/.cxx/
+local.properties
+*.iml
+.idea/
+.kotlin/
+android/app/**/google-services.json
+**/libggml-htp*.so
+android/android-build.log
+/payload-report.txt
+*.keystore
+!debug.keystore
+
+# --- iOS / Xcode ---
+**/Pods/
+**/DerivedData/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata/
+*.xccheckout
+*.moved-aside
+*.hmap
+*.xcuserstate
+**/.xcode.env.local
+ios/dist/
+ios/Config/Env.xcconfig
+ios/GoogleService-Info.plist
+
+# --- Environment & Secret Files ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# --- Temporary & Metro Bundler ---
+.metro-health-check*
+/coverage
+coverage/
+**/coverage/
+
+# --- Fastlane ---
+**/fastlane/report.xml
+**/fastlane/Preview.html
+**/fastlane/screenshots
+**/fastlane/test_output
+
+# --- E2E / Test Artifacts ---
+e2e/debug-output/
+e2e/device-farm-artifacts/
+e2e/test-package.zip
+e2e/testspec-*-allmodels.yml
+e2e/devices.json
+e2e/reports/
+e2e/dist/
+e2e/specs/visual-capture/TASK-*.spec.ts
+
+# --- IDE / Editor Configurations ---
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+*.sublime-project
+*.sublime-workspace
+
+# --- Workflow Drafts ---
+workflows/

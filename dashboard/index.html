@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>PROJECT VOID // NEURAL OPERATOR HUD</title>
+  <meta name="description" content="Autonomous Sci-Fi AI Companion Operator HUD for XIAO ESP32-S3 Sense - VOID Neural Architecture">
+  
+  <!-- Modern Sci-Fi & Nothing OS Dot-Matrix Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;600;700;800;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="stylesheet" href="style.css">
+  <!-- Three.js (Industry Standard 3D WebGL Library) -->
+  <script src="three.min.js"></script>
+</head>
+<body class="nothing-os-theme">
+  <!-- Subtle Minimal Wallpaper Grid -->
+  <div class="dot-matrix-bg"></div>
+
+  <!-- Android Viewport Frame -->
+  <div class="hud-frame">
+
+    <!-- ==================== MINIMAL ANDROID STATUS BAR (TOP) ==================== -->
+    <div class="android-status-bar">
+      <div class="status-bar-left">
+        <span class="status-clock" id="statusClock">09:41</span>
+      </div>
+      <div class="status-bar-right">
+        <div class="glyph-icon-bar">
+          <!-- Dot-matrix WiFi -->
+          <svg viewBox="0 0 24 24" class="dot-svg active" title="WiFi 5G">
+            <circle cx="12" cy="19" r="1.6" fill="var(--nt-red)" />
+            <circle cx="8" cy="15" r="1.2" fill="#D4C9A8" /><circle cx="12" cy="14" r="1.2" fill="#D4C9A8" /><circle cx="16" cy="15" r="1.2" fill="#D4C9A8" />
+            <circle cx="4" cy="10" r="1.2" fill="#D4C9A8" /><circle cx="8" cy="8.5" r="1.2" fill="#D4C9A8" /><circle cx="12" cy="8" r="1.2" fill="#D4C9A8" /><circle cx="16" cy="8.5" r="1.2" fill="#D4C9A8" /><circle cx="20" cy="10" r="1.2" fill="#D4C9A8" />
+          </svg>
+          <!-- Dot-matrix Bluetooth -->
+          <svg viewBox="0 0 24 24" class="dot-svg active" title="Bluetooth">
+            <circle cx="12" cy="4" r="1.2" fill="#D4C9A8" /><circle cx="15.5" cy="7.5" r="1.2" fill="#D4C9A8" /><circle cx="12" cy="11" r="1.2" fill="var(--nt-red)" />
+            <circle cx="8.5" cy="7.5" r="1.2" fill="#D4C9A8" /><circle cx="8.5" cy="16.5" r="1.2" fill="#D4C9A8" /><circle cx="15.5" cy="16.5" r="1.2" fill="#D4C9A8" />
+            <circle cx="12" cy="20" r="1.2" fill="#D4C9A8" /><circle cx="12" cy="15" r="1.2" fill="#D4C9A8" /><circle cx="12" cy="8" r="1.2" fill="#D4C9A8" />
+          </svg>
+        </div>
+        <!-- Dot-matrix Battery -->
+        <div class="battery-capsule">
+          <span class="battery-pct" id="statusBatteryPct">82%</span>
+          <div class="dot-battery-pill">
+            <span class="bat-dot active"></span>
+            <span class="bat-dot active"></span>
+            <span class="bat-dot active"></span>
+            <span class="bat-dot active red"></span>
+            <span class="bat-dot"></span>
+          </div>
+        </div>
+        <!-- Applications Hub Button at Far Right Corner -->
+        <button class="top-apps-hub-btn" id="topAppsHubBtn" data-app="drawer" title="Applications Hub">
+          <svg viewBox="0 0 24 24" class="top-matrix-glyph">
+            <circle cx="5" cy="5" r="1.6" fill="currentColor"/>
+            <circle cx="12" cy="5" r="1.6" fill="currentColor"/>
+            <circle cx="19" cy="5" r="1.6" fill="currentColor"/>
+            <circle cx="5" cy="12" r="1.6" fill="currentColor"/>
+            <circle cx="12" cy="12" r="2.0" fill="var(--nt-red)"/>
+            <circle cx="19" cy="12" r="1.6" fill="currentColor"/>
+            <circle cx="5" cy="19" r="1.6" fill="currentColor"/>
+            <circle cx="12" cy="19" r="1.6" fill="currentColor"/>
+            <circle cx="19" cy="19" r="1.6" fill="currentColor"/>
+          </svg>
+          <span class="hub-text">APPS</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ==================== CLEAN HERO STAGE ==================== -->
+    <main class="hud-stage">
+      <section class="singularity-container" id="singularityContainer">
+        <canvas id="singularityCanvas"></canvas>
+      </section>
+    </main>
+
+    <!-- ==================== ANDROID GESTURE NAVIGATION BAR ==================== -->
+    <div class="android-nav-bar">
+      <div class="nav-gesture-pill" id="navGesturePill"></div>
+    </div>
+
+    <!-- ==================== TACTICAL MODAL WINDOWS ==================== -->
+    
+    <!-- 1. CAMERA OPTICS MODAL (LIVE ESP32-S3 FEED) -->
+    <div class="tactical-modal" id="modalCamera">
+      <div class="modal-frame">
+        <div class="modal-header">
+          <div class="modal-title">
+            <span class="red-bar"></span>
+            <span>TACTICAL OPTICS // LIVE SENSE FEED</span>
+            <span class="badge-tag">STREAM PORT :80</span>
+          </div>
+          <div class="modal-actions">
+            <button class="modal-btn" id="btnSnapshot">📸 SNAPSHOT</button>
+            <button class="modal-btn" id="btnReloadStream">⟳ REFRESH</button>
+            <button class="modal-close" data-close="modalCamera">✕</button>
+          </div>
+        </div>
+        <div class="modal-body cam-body">
+          <div class="cam-viewport-wrap">
+            <img id="liveStreamImg" src="http://192.168.0.106/" alt="XIAO ESP32-S3 Camera Stream" crossorigin="anonymous">
+            <!-- Tactical Crosshair & Grid HUD Overlay -->
+            <div class="camera-hud-overlay">
+              <div class="cam-crosshair-center">
+                <div class="ch-circle"></div>
+                <div class="ch-line-h"></div>
+                <div class="ch-line-v"></div>
+              </div>
+              <div class="cam-corner tl"></div>
+              <div class="cam-corner tr"></div>
+              <div class="cam-corner bl"></div>
+              <div class="cam-corner br"></div>
+              <div class="cam-stream-meta">
+                <span>FPS: <strong id="camFpsReadout">28.4</strong></span>
+                <span>RES: <strong>FRAMESIZE_VGA</strong></span>
+                <span>FORMAT: <strong>MJPEG</strong></span>
+                <span>TARGET: <strong>192.168.0.106</strong></span>
+              </div>
+            </div>
+          </div>
+          <div class="cam-controls-bar">
+            <div class="cam-ctrl-item">
+              <label>BRIGHTNESS</label>
+              <input type="range" id="camBrightness" min="50" max="150" value="100">
+            </div>
+            <div class="cam-ctrl-item">
+              <label>CONTRAST</label>
+              <input type="range" id="camContrast" min="50" max="150" value="100">
+            </div>
+            <div class="cam-ctrl-item">
+              <label>INVERT / IR</label>
+              <button class="toggle-btn" id="btnToggleInvert">OFF</button>
+            </div>
+            <div class="cam-ctrl-item">
+              <button class="action-btn-red" id="btnAiAnalyzeFrame">⚡ AI VISION INFERENCE</button>
+            </div>
+          </div>
+          <div class="cam-ai-result-panel" id="camAiResult" style="display:none;">
+            <div class="ai-header">VISION INTEL // RESULT:</div>
+            <div class="ai-text" id="camAiText">Scanning target frame...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. CALL SYS & AUDIO OPERATOR MODAL -->
+    <div class="tactical-modal" id="modalCall">
+      <div class="modal-frame">
+        <div class="modal-header">
+          <div class="modal-title">
+            <span class="red-bar"></span>
+            <span>VOICE OPERATOR // I2S PDM MIC STREAM</span>
+            <span class="badge-tag">PORT :81 WS</span>
+          </div>
+          <div class="modal-actions">
+            <button class="modal-close" data-close="modalCall">✕</button>
+          </div>
+        </div>
+        <div class="modal-body voice-body">
+          <div class="voice-hero">
+            <div class="voice-rings-container">
+              <div class="voice-pulse-ring ring-1"></div>
+              <div class="voice-pulse-ring ring-2"></div>
+              <div class="voice-pulse-ring ring-3"></div>
+              <button class="voice-main-btn" id="btnToggleMic">
+                <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5-3c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+              </button>
+            </div>
+            <div class="voice-status-title" id="voiceStatusTitle">MIC INACTIVE // TAP TO LISTEN</div>
+            <div class="voice-status-sub">Listening via XIAO ESP32-S3 PDM Mic (GPIO 41 DATA, GPIO 42 CLK)</div>
+          </div>
+          
+          <div class="voice-analyzer-panel">
+            <div class="analyzer-title">RAW 16kHz PCM FREQUENCY SPECTRUM:</div>
+            <canvas id="voiceVisualizerCanvas" width="600" height="120"></canvas>
+          </div>
+
+          <div class="voice-transcript-log">
+            <div class="transcript-header">// SPEECH TRANSCRIPTION STREAM:</div>
+            <div class="transcript-content" id="voiceTranscriptContent">
+              <p class="placeholder-tx">[Waiting for wake-word or audio trigger...]</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. MESSAGES / NEURAL CHAT MODAL -->
+    <div class="tactical-modal" id="modalMessages">
+      <div class="modal-frame mecha-blueprint-frame">
+        <div class="modal-header">
+          <div class="modal-title">
+            <div class="gundam-tri-bar">
+              <span class="bar-blue"></span>
+              <span class="bar-yellow"></span>
+              <span class="bar-red"></span>
+            </div>
+            <span>TACTICAL COMMS // VOID NEURAL LINK</span>
+            <span class="badge-tag">SECURE P2P</span>
+          </div>
+          <div class="modal-actions">
+            <button class="modal-btn" id="btnClearChat">CLEAR LOGS</button>
+            <button class="modal-close" data-close="modalMessages">✕</button>
+          </div>
+        </div>
+        <div class="modal-body chat-body">
+          <!-- Professional System Parameter Matrix Strip -->
+          <div class="comms-matrix-strip">
+            <div class="matrix-chip"><span class="chip-k">PROTOCOL:</span> <span class="chip-v">AES-GCM // WS:81</span></div>
+            <div class="matrix-chip"><span class="chip-k">NODE:</span> <span class="chip-v">192.168.0.106</span></div>
+            <div class="matrix-chip"><span class="chip-k">HONESTY:</span> <span class="chip-v" id="chipHonesty">90%</span></div>
+            <div class="matrix-chip"><span class="chip-k">HUMOR:</span> <span class="chip-v" id="chipHumor">75%</span></div>
+          </div>
+
+          <div class="chat-logs-container" id="chatLogs">
+            <div class="transmission-card void-log">
+              <div class="trans-header">
+                <div class="trans-identity">
+                  <span class="trans-indicator ind-void"></span>
+                  <span class="trans-label">SYS // VOID KERNEL</span>
+                </div>
+                <span class="trans-time">SYSTEM_READY</span>
+              </div>
+              <div class="trans-body">
+                Telemetry and neural core operational. Sense optical feed link established at 192.168.0.106:80. Honesty parameter calibrated to 90%, Humor parameter set to 75%. Ready for instructions, Operator.
+              </div>
+            </div>
+          </div>
+          <form class="chat-input-bar" id="chatForm">
+            <span class="cmd-prompt-prefix">CMD &gt;</span>
+            <input type="text" id="chatInput" placeholder="Enter tactical query or command..." autocomplete="off">
+            <button type="submit" class="chat-send-btn">TRANSMIT ↵</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. METRICS / HARDWARE TELEMETRY MODAL -->
+    <div class="tactical-modal" id="modalMetrics">
+      <div class="modal-frame">
+        <div class="modal-header">
+          <div class="modal-title">
+            <span class="red-bar"></span>
+            <span>DIAGNOSTICS & TELEMETRY // XIAO ESP32-S3 SENSE</span>
+            <span class="badge-tag">REALTIME</span>
+          </div>
+          <div class="modal-actions">
+            <button class="modal-close" data-close="modalMetrics">✕</button>
+          </div>
+        </div>
+        <div class="modal-body metrics-body">
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="m-card-title">INTERNAL HEAP</div>
+              <div class="m-card-val" id="valHeap">284 KB</div>
+              <div class="m-card-bar"><div class="fill" style="width: 72%;"></div></div>
+            </div>
+            <div class="metric-card">
+              <div class="m-card-title">OCTAL PSRAM</div>
+              <div class="m-card-val" id="valPsram">7.82 MB</div>
+              <div class="m-card-bar"><div class="fill" style="width: 15%;"></div></div>
+            </div>
+            <div class="metric-card">
+              <div class="m-card-title">WEBSOCKET RTT PING</div>
+              <div class="m-card-val" id="valPing">12 ms</div>
+              <div class="m-card-bar"><div class="fill" style="width: 20%;"></div></div>
+            </div>
+            <div class="metric-card">
+              <div class="m-card-title">CAMERA STREAM FPS</div>
+              <div class="m-card-val" id="valCamFps">28.4 FPS</div>
+              <div class="m-card-bar"><div class="fill" style="width: 90%;"></div></div>
+            </div>
+            <div class="metric-card">
+              <div class="m-card-title">AUDIO SAMPLE RATE</div>
+              <div class="m-card-val">16,000 Hz</div>
+              <div class="m-card-bar"><div class="fill" style="width: 100%;"></div></div>
+            </div>
+            <div class="metric-card">
+              <div class="m-card-title">CORE CPU FREQUENCY</div>
+              <div class="m-card-val">240 MHz (Dual Xtensa)</div>
+              <div class="m-card-bar"><div class="fill" style="width: 100%;"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. SETTINGS MODAL -->
+    <div class="tactical-modal" id="modalSettings">
+      <div class="modal-frame">
+        <div class="modal-header">
+          <div class="modal-title">
+            <span class="red-bar"></span>
+            <span>SYSTEM CONFIGURATION // NETWORK & SENSE INTERFACES</span>
+            <span class="badge-tag">PREFERENCES</span>
+          </div>
+          <div class="modal-actions">
+            <button class="modal-close" data-close="modalSettings">✕</button>
+          </div>
+        </div>
+        <div class="modal-body settings-body">
+          <form class="settings-form" id="settingsForm">
+            <div class="form-group">
+              <label>ROVE HARDWARE IP (XIAO ESP32-S3)</label>
+              <input type="text" id="cfgBoardIp" value="192.168.0.106">
+              <span class="input-hint">Default local IP assigned by your WiFi router</span>
+            </div>
+            <div class="form-group">
+              <label>WEBSOCKET PORT</label>
+              <input type="number" id="cfgWsPort" value="81">
+              <span class="input-hint">Port 81 handles telemetry & mic audio streaming</span>
+            </div>
+            <div class="form-group">
+              <label>VOID KERNEL TONE / CALIBRATION (%)</label>
+              <input type="range" id="cfgHumor" min="0" max="100" value="75">
+              <span class="range-val" id="humorVal">75%</span>
+            </div>
+            <div class="form-group">
+              <label>AI PROVIDER ENDPOINT (FOR VOICE / REASONING)</label>
+              <select id="cfgAiProvider">
+                <option value="builtin">Built-in Tactical Simulation / Local Web Worker</option>
+                <option value="groq">Groq Cloud (Llama-3-70b / Whisper)</option>
+                <option value="ollama">Local Ollama / Android Termux</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>API KEY (OPTIONAL)</label>
+              <input type="password" id="cfgApiKey" placeholder="gsk_... or sk-...">
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="action-btn-red">APPLY & RECONNECT</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. BROWSEROS MODAL -->
+    <div class="tactical-modal" id="modalBrowser">
+      <div class="modal-frame">
+        <div class="modal-header">
+          <div class="modal-title">
+            <span class="red-bar"></span>
+            <span>BROWSEROS // AUTONOMOUS RECON & KNOWLEDGE NODE</span>
+            <span class="badge-tag">INTEL</span>
+          </div>
+          <div class="modal-actions">
+            <button class="modal-close" data-close="modalBrowser">✕</button>
+          </div>
+        </div>
+        <div class="modal-body browser-body">
+          <div class="browser-search-bar">
+            <input type="text" id="browserSearchInput" placeholder="Enter tactical query, URL or search target...">
+            <button class="action-btn-red" id="btnBrowserSearch">EXECUTE SEARCH</button>
+          </div>
+          <div class="browser-results" id="browserResults">
+            <div class="result-card">
+              <div class="res-title">XIAO ESP32-S3 Sense Technical Telemetry</div>
+              <div class="res-desc">Dual-core Xtensa LX7 @ 240MHz, 8MB PSRAM, OV2640 camera, on-board PDM mic (GPIO 41/42), battery charge management chip.</div>
+              <div class="res-url">LOCAL_NODE://HARDWARE_SPEC/ESP32S3_SENSE</div>
+            </div>
+            <div class="result-card">
+              <div class="res-title">Interstellar Ergosphere & Accretion Dynamics</div>
+              <div class="res-desc">Kerr black hole metric with extreme spin parameter a = 0.998. Relativistic Doppler beaming generates asymmetric brightness across the photon ring.</div>
+              <div class="res-url">DATABASE://ASTROPHYSICS/KERR_METRIC_SIMULATION</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. STORAGE VAULT MODAL -->
+    <div class="tactical-modal" id="modalStorage">
+      <div class="modal-frame">
+        <div class="modal-header">
+          <div class="modal-title">
+            <span class="red-bar"></span>
+            <span>STORAGE VAULT // MEDIA & NEURAL LOGS</span>
+            <span class="badge-tag">FLASH + LOCAL</span>
+          </div>
+          <div class="modal-actions">
+            <button class="modal-close" data-close="modalStorage">✕</button>
+          </div>
+        </div>
+        <div class="modal-body storage-body">
+          <div class="storage-grid" id="storageGrid">
+            <div class="storage-card">
+              <div class="s-icon">🖼️</div>
+              <div class="s-info">
+                <div class="s-name">SNAPSHOT_20261011_01.jpg</div>
+                <div class="s-meta">VGA 640x480 • 42.8 KB</div>
+              </div>
+            </div>
+            <div class="storage-card">
+              <div class="s-icon">🎙️</div>
+              <div class="s-info">
+                <div class="s-name">AUDIO_PCM_BUFFER_04.wav</div>
+                <div class="s-meta">16kHz 16-bit • 5.2s • 166 KB</div>
+              </div>
+            </div>
+            <div class="storage-card">
+              <div class="s-icon">💾</div>
+              <div class="s-info">
+                <div class="s-name">VOID_CHECKPOINT_V2.bin</div>
+                <div class="s-meta">State Matrix • 1.2 MB</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. MAPS / RF LOCALIZATION RADAR MODAL -->
+    <div class="tactical-modal" id="modalMaps">
+      <div class="modal-frame mecha-blueprint-frame">
+        <div class="modal-header">
+          <div class="modal-title">
+            <div class="gundam-tri-bar">
+              <span class="bar-blue"></span>
+              <span class="bar-yellow"></span>
+              <span class="bar-red"></span>
+            </div>
+            <span>HKO-TYPE PPI // RF HUMAN LOCALIZER &amp; WIFI PROXIMITY SCOPE</span>
+            <span class="badge-tag">2.4GHz RF // CSI SENSE</span>
+          </div>
+          <div class="modal-actions">
+            <button class="modal-close" data-close="modalMaps">✕</button>
+          </div>
+        </div>
+        <div class="modal-body maps-body rf-radar-body">
+          <!-- Real-Time WiFi RSSI Proximity Strip -->
+          <div class="comms-matrix-strip rf-telemetry-strip">
+            <div class="matrix-chip"><span class="chip-k">TARGET:</span> <span class="chip-v" id="rfTargetStatus">HUMAN OPERATOR DETECTED</span></div>
+            <div class="matrix-chip"><span class="chip-k">CALC DISTANCE:</span> <span class="chip-v" id="rfDistanceReadout">1.48 M</span></div>
+            <div class="matrix-chip"><span class="chip-k">LINK RSSI:</span> <span class="chip-v" id="rfRssiReadout">-48 dBm</span></div>
+            <div class="matrix-chip"><span class="chip-k">RF PERTURBATION:</span> <span class="chip-v" id="rfMotionIndex">16.4% // ACTIVE</span></div>
+          </div>
+
+          <div class="vintage-ppi-wrapper">
+            <!-- Vintage Phosphor CRT Radar Canvas -->
+            <canvas id="radarScopeCanvas" width="560" height="480"></canvas>
+            
+            <div class="ppi-vintage-stamp">
+              <span>(C) VOID OBSERVATORY // ROVE RF NODE</span>
+              <span id="ppiTimestamp">12:19:22 UTC</span>
+            </div>
+
+            <!-- Calibration & Live Model Parameters -->
+            <div class="ppi-specs-overlay">
+              <div>ALGO: LOG-DISTANCE PATH LOSS (n=2.4)</div>
+              <div>REF: -42 dBm @ 1.0M // KALMAN SMOOTHED</div>
+              <div>BAND: 802.11 b/g/n // CH 6 (2437 MHz)</div>
+              <div>RANGE SCALE: 8.0 METERS FULL RING</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9. SECURITY FIREWALL MODAL -->
+    <div class="tactical-modal" id="modalSecurity">
+      <div class="modal-frame">
+        <div class="modal-header">
+          <div class="modal-title">
+            <span class="red-bar"></span>
+            <span>SECURITY MATRIX // SENSOR LOCKS & ENCRYPTION</span>
+            <span class="badge-tag">SECURE</span>
+          </div>
+          <div class="modal-actions">
+            <button class="modal-close" data-close="modalSecurity">✕</button>
+          </div>
+        </div>
+        <div class="modal-body security-body">
+          <div class="security-items">
+            <div class="sec-row">
+              <div class="sec-label">
+                <strong>WEBSOCKET AUTHENTICATION</strong>
+                <span>Require token handshake on port 81</span>
+              </div>
+              <button class="toggle-btn on">ACTIVE</button>
+            </div>
+            <div class="sec-row">
+              <div class="sec-label">
+                <strong>CAMERA PRIVACY SHUTTER</strong>
+                <span>Disable OV2640 sensor clock line</span>
+              </div>
+              <button class="toggle-btn" id="btnPrivacyShutter">OFF</button>
+            </div>
+            <div class="sec-row">
+              <div class="sec-label">
+                <strong>PDM MIC MUTE LOCK</strong>
+                <span>Hardware disable I2S audio stream</span>
+              </div>
+              <button class="toggle-btn" id="btnMicLock">OFF</button>
+            </div>
+            <div class="sec-row">
+              <div class="sec-label">
+                <strong>LOCAL ONLY FIREWALL</strong>
+                <span>Block all external outbound WAN traffic</span>
+              </div>
+              <button class="toggle-btn on">ENFORCED</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10. GUNDAM RX-78-2 MECHA SYSTEM DRAWER -->
+    <div class="tactical-modal drawer-modal" id="modalDrawer">
+      <div class="modal-frame drawer-frame mecha-blueprint-frame">
+        <div class="mecha-corner-chamfer tl"></div>
+        <div class="mecha-corner-chamfer tr"></div>
+        <div class="mecha-corner-chamfer bl"></div>
+        <div class="mecha-corner-chamfer br"></div>
+
+        <div class="modal-header mecha-drawer-header">
+          <div class="modal-title">
+            <div class="gundam-tri-bar">
+              <span class="bar-blue"></span>
+              <span class="bar-yellow"></span>
+              <span class="bar-red"></span>
+            </div>
+            <span class="title-main">RX-78-2 // MOBILE SUIT CORES</span>
+            <span class="mecha-spec-tag">WB-102</span>
+          </div>
+          <div class="modal-actions">
+            <button class="modal-close mecha-close" data-close="modalDrawer" title="Close Drawer">✕</button>
+          </div>
+        </div>
+
+        <div class="modal-body drawer-body mecha-drawer-body">
+          <div class="drawer-grid mecha-grid" id="drawerGrid">
+
+            <!-- 1. OPTICS (CAMERA) -->
+            <button class="drawer-app-card mecha-card theme-mint" data-open="modalCamera">
+              <div class="card-stencil-header">
+                <span class="card-code">OPT-01</span>
+                <span class="card-rivet"></span>
+              </div>
+              <div class="card-glyph-wrap">
+                <svg viewBox="0 0 44 44" class="mecha-ink-glyph">
+                  <!-- Mechanical camera aperture with mint optical lens -->
+                  <circle cx="22" cy="22" r="17" fill="none" stroke="currentColor" stroke-width="1.5" />
+                  <circle cx="22" cy="22" r="13" fill="rgba(54, 214, 168, 0.15)" stroke="currentColor" stroke-width="1.2" stroke-dasharray="3 2" />
+                  <circle cx="22" cy="22" r="8" fill="#36D6A8" stroke="currentColor" stroke-width="1.5" />
+                  <circle cx="22" cy="22" r="3.5" fill="currentColor" />
+                  <line x1="22" y1="2" x2="22" y2="7" stroke="currentColor" stroke-width="1.5" />
+                  <line x1="22" y1="37" x2="22" y2="42" stroke="currentColor" stroke-width="1.5" />
+                  <line x1="2" y1="22" x2="7" y2="22" stroke="currentColor" stroke-width="1.5" />
+                  <line x1="37" y1="22" x2="42" y2="22" stroke="currentColor" stroke-width="1.5" />
+                  <circle cx="9" cy="9" r="1.2" fill="currentColor" />
+                  <circle cx="35" cy="9" r="1.2" fill="currentColor" />
+                  <circle cx="9" cy="35" r="1.2" fill="currentColor" />
+                  <circle cx="35" cy="35" r="1.2" fill="currentColor" />
+                </svg>
+              </div>
+              <div class="card-info">
+                <span class="app-name">OPTICS FEED</span>
+              </div>
+            </button>
+
+            <!-- 2. VOICE COMMS (CALL SYS) -->
+            <button class="drawer-app-card mecha-card theme-yellow" data-open="modalCall">
+              <div class="card-stencil-header">
+                <span class="card-code">COM-02</span>
+                <span class="card-rivet"></span>
+              </div>
+              <div class="card-glyph-wrap">
+                <svg viewBox="0 0 44 44" class="mecha-ink-glyph">
+                  <!-- RX-78 chest vent slats + acoustic diaphragm in mustard yellow -->
+                  <rect x="6" y="8" width="32" height="28" rx="2" fill="rgba(229, 162, 30, 0.12)" stroke="currentColor" stroke-width="1.5" />
+                  <rect x="10" y="12" width="24" height="4" fill="#E5A21E" stroke="currentColor" stroke-width="1.2" />
+                  <rect x="10" y="18" width="24" height="4" fill="#E5A21E" stroke="currentColor" stroke-width="1.2" />
+                  <rect x="10" y="24" width="24" height="4" fill="#E5A21E" stroke="currentColor" stroke-width="1.2" />
+                  <line x1="22" y1="2" x2="22" y2="8" stroke="currentColor" stroke-width="1.5" />
+                  <circle cx="22" cy="32" r="2" fill="currentColor" />
+                  <line x1="14" y1="32" x2="18" y2="32" stroke="currentColor" stroke-width="1.2" />
+                  <line x1="26" y1="32" x2="30" y2="32" stroke="currentColor" stroke-width="1.2" />
+                </svg>
+              </div>
+              <div class="card-info">
+                <span class="app-name">VOICE COMMS</span>
+              </div>
+            </button>
+
+            <!-- 3. NEURAL CHAT (MESSAGES) -->
+            <button class="drawer-app-card mecha-card theme-blue" data-open="modalMessages">
+              <div class="card-stencil-header">
+                <span class="card-code">DAT-03</span>
+                <span class="card-rivet"></span>
+              </div>
+              <div class="card-glyph-wrap">
+                <svg viewBox="0 0 44 44" class="mecha-ink-glyph">
+                  <!-- Gundam v-fin antenna & neural transmission packet in steel blue -->
+                  <path d="M8 34 L18 10 L22 18 L26 10 L36 34" fill="rgba(122, 150, 178, 0.12)" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+                  <polygon points="17,17 22,27 27,17 22,12" fill="#7A96B2" stroke="currentColor" stroke-width="1.2" />
+                  <circle cx="22" cy="31" r="3" fill="#E5A21E" stroke="currentColor" stroke-width="1.2" />
+                  <line x1="12" y1="34" x2="32" y2="34" stroke="currentColor" stroke-width="1.5" />
+                </svg>
+              </div>
+              <div class="card-info">
+                <span class="app-name">AI MESSAGES</span>
+              </div>
+            </button>
+
+            <!-- 4. RADAR NAV (MAPS) -->
+            <button class="drawer-app-card mecha-card theme-blue" data-open="modalMaps">
+              <div class="card-stencil-header">
+                <span class="card-code">NAV-04</span>
+                <span class="card-rivet"></span>
+              </div>
+              <div class="card-glyph-wrap">
+                <svg viewBox="0 0 44 44" class="mecha-ink-glyph">
+                  <!-- Precision mechanical targeting radar scope in steel blue -->
+                  <circle cx="22" cy="22" r="17" fill="rgba(122, 150, 178, 0.12)" stroke="currentColor" stroke-width="1.5" />
+                  <circle cx="22" cy="22" r="11" fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="3 2" />
+                  <circle cx="22" cy="22" r="5" fill="none" stroke="currentColor" stroke-width="1.2" />
+                  <line x1="5" y1="22" x2="39" y2="22" stroke="currentColor" stroke-width="1.2" />
+                  <line x1="22" y1="5" x2="22" y2="39" stroke="currentColor" stroke-width="1.2" />
+                  <polygon points="22,22 34,14 31,11" fill="#7A96B2" stroke="currentColor" stroke-width="1" />
+                  <circle cx="31" cy="14" r="2.5" fill="#E5A21E" stroke="currentColor" stroke-width="1" />
+                </svg>
+              </div>
+              <div class="card-info">
+                <span class="app-name">SPATIAL RADAR</span>
+              </div>
+            </button>
+
+            <!-- 5. TELEMETRY (METRICS) -->
+            <button class="drawer-app-card mecha-card theme-yellow" data-open="modalMetrics">
+              <div class="card-stencil-header">
+                <span class="card-code">TLM-05</span>
+                <span class="card-rivet"></span>
+              </div>
+              <div class="card-glyph-wrap">
+                <svg viewBox="0 0 44 44" class="mecha-ink-glyph">
+                  <!-- Analog technical power gauge ladder in marigold yellow -->
+                  <rect x="7" y="10" width="30" height="24" rx="2" fill="rgba(229, 162, 30, 0.12)" stroke="currentColor" stroke-width="1.5" />
+                  <line x1="12" y1="28" x2="16" y2="28" stroke="currentColor" stroke-width="1.5" />
+                  <rect x="17" y="24" width="4" height="6" fill="#7A96B2" stroke="currentColor" stroke-width="1" />
+                  <rect x="23" y="18" width="4" height="12" fill="#E5A21E" stroke="currentColor" stroke-width="1" />
+                  <rect x="29" y="14" width="4" height="16" fill="#C86676" stroke="currentColor" stroke-width="1" />
+                  <circle cx="12" cy="16" r="2" fill="currentColor" />
+                </svg>
+              </div>
+              <div class="card-info">
+                <span class="app-name">TELEMETRY</span>
+              </div>
+            </button>
+
+            <!-- 6. SETTINGS (CONFIG) -->
+            <button class="drawer-app-card mecha-card theme-red" data-open="modalSettings">
+              <div class="card-stencil-header">
+                <span class="card-code">CFG-06</span>
+                <span class="card-rivet"></span>
+              </div>
+              <div class="card-glyph-wrap">
+                <svg viewBox="0 0 44 44" class="mecha-ink-glyph">
+                  <!-- Mecha rotary gear joint in cockpit dusty rose red -->
+                  <polygon points="22,6 26,10 32,8 34,14 40,16 38,22 40,28 34,30 32,36 26,34 22,38 18,34 12,36 10,30 4,28 6,22 4,16 10,14 12,8 18,10" fill="rgba(200, 102, 118, 0.12)" stroke="currentColor" stroke-width="1.5" />
+                  <circle cx="22" cy="22" r="9" fill="#C86676" stroke="currentColor" stroke-width="1.4" />
+                  <circle cx="22" cy="22" r="4" fill="rgba(229, 162, 30, 0.25)" stroke="currentColor" stroke-width="1.2" />
+                  <circle cx="22" cy="1.5" fill="currentColor" />
+                </svg>
+              </div>
+              <div class="card-info">
+                <span class="app-name">SETTINGS</span>
+              </div>
+            </button>
+
+            <!-- 7. OTA UPDATE (DOWNLOAD VOID APK v1.20.0) -->
+            <a href="VOID-v1.20.0-MECHA.apk" download class="drawer-app-card mecha-card theme-mint" style="text-decoration:none;">
+              <div class="card-stencil-header">
+                <span class="card-code">OTA-07</span>
+                <span class="card-rivet"></span>
+              </div>
+              <div class="card-glyph-wrap">
+                <svg viewBox="0 0 44 44" class="mecha-ink-glyph">
+                  <!-- Download Arrow & Storage Core in Mint -->
+                  <rect x="8" y="32" width="28" height="4" rx="1" fill="#36D6A8" stroke="currentColor" stroke-width="1.2" />
+                  <path d="M22 6 L22 26 M14 18 L22 26 L30 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                  <circle cx="22" cy="10" r="1.5" fill="#E5A21E" />
+                </svg>
+              </div>
+              <div class="card-info">
+                <span class="app-name">APK v1.20.0</span>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div> <!-- End hud-frame -->
+
+  <!-- Scripts -->
+  <script src="singularity.js"></script>
+  <script src="esp32_client.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
