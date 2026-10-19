@@ -125,28 +125,28 @@ window.addEventListener('DOMContentLoaded', () => {
         return vec2(c * v.x - s * v.y, s * v.x + c * v.y);
       }
 
-      // Grok + Interstellar Thermal Palette:
-      // White-Hot Grok Beam Core -> Fiery Golden Amber -> Electric Crimson Red (#FF2035) -> Smoky Deep Charcoal
+      // Gundam RX-78-2 Mecha Thermal Palette:
+      // Cream-Ivory Hot Core -> Amber Mustard -> Burnt Copper -> Warm Charcoal Dark
       vec3 grokPlasmaColor(float heat) {
         heat = clamp(heat, 0.0, 1.0);
         
-        vec3 cCharcoal = vec3(0.38, 0.04, 0.06);   // Smoky deep charcoal crimson
-        vec3 cCrimson  = vec3(1.00, 0.16, 0.22);   // Electric crimson red (#FF2035)
-        vec3 cAmber    = vec3(1.00, 0.72, 0.32);   // Fiery golden amber
-        vec3 cWhite    = vec3(1.00, 0.98, 0.94);   // Incandescent white-hot core
+        vec3 cShadow  = vec3(0.14, 0.12, 0.10);   // Dark panel shadow
+        vec3 cCopper  = vec3(0.65, 0.35, 0.10);   // Burnt copper / rust
+        vec3 cAmber   = vec3(0.88, 0.63, 0.09);   // Amber mustard (#C89018)
+        vec3 cIvory   = vec3(0.88, 0.86, 0.82);   // Off-white armor (#E0DCD0)
 
         if (heat > 0.72) {
-          return mix(cAmber, cWhite, (heat - 0.72) / 0.28);
+          return mix(cAmber, cIvory, (heat - 0.72) / 0.28);
         } else if (heat > 0.35) {
-          return mix(cCrimson, cAmber, (heat - 0.35) / 0.37);
+          return mix(cCopper, cAmber, (heat - 0.35) / 0.37);
         } else {
-          return mix(cCharcoal, cCrimson, heat / 0.35);
+          return mix(cShadow, cCopper, heat / 0.35);
         }
       }
 
       // Physics Raytracer: Evaluates radiance at any given screen coordinate uv
       vec4 traceBlackHole(vec2 uv) {
-        float rh = 0.168; // Schwarzschild shadow radius (prominent event horizon)
+        float rh = 0.20; // Schwarzschild shadow radius (prominent black hole core)
         float W = B_CRIT / max(rh, 1e-4);
 
         // Iconic ~36.5 deg Grok Diagonal Orientation
@@ -234,15 +234,15 @@ window.addEventListener('DOMContentLoaded', () => {
 
         if (!captured && dot(x, x) < 3.8) captured = true;
 
-        // Razor-sharp Einstein photon ring hugging the event horizon — incandescent white dots
+        // Razor-sharp Einstein photon ring — amber-gold instead of white
         float rScreen = length(uv);
         float rPhoton = rh * 1.045;
         float photonHalo = exp(-abs(rScreen - rPhoton) * 165.0) * 2.2;
-        emitc += vec3(1.00, 0.98, 0.94) * photonHalo; // Incandescent white photon ring
+        emitc += vec3(0.95, 0.78, 0.38) * photonHalo;  // Amber gold photon ring
 
-        // Soft electric crimson atmospheric corona
+        // Soft warm amber atmospheric corona
         float corona = exp(-abs(rScreen - rh) * 22.0) * 0.36;
-        emitc += vec3(1.00, 0.16, 0.22) * corona; // Electric crimson corona
+        emitc += vec3(0.78, 0.42, 0.08) * corona;  // Burnt copper corona
 
         vec3 tonemapped = vec3(1.0) - exp(-emitc * 1.48);
         return vec4(tonemapped, captured ? 1.0 : 0.0);
@@ -253,8 +253,8 @@ window.addEventListener('DOMContentLoaded', () => {
         float minDim = min(res.x, res.y);
         
         // ==================== NOTHING OS QUANTUM DOT-MATRIX RASTERIZER ====================
-        // Pitch: 6.2 CSS pixels scaled by pixel ratio for crisp Nothing OS dot matrix
-        float dotPitch = 6.2 * uPixelRatio;
+        // Pitch: 3.6 pixels scaled by pixel ratio for high-density uniform crisp Dot-Matrix resolution
+        float dotPitch = 3.6 * uPixelRatio;
         vec2 dotGrid = gl_FragCoord.xy / dotPitch;
         vec2 cell = floor(dotGrid);
         vec2 local = fract(dotGrid) - 0.5;
@@ -264,8 +264,8 @@ window.addEventListener('DOMContentLoaded', () => {
         vec2 cellCenterFrag = (cell + 0.5) * dotPitch;
         vec2 cellUV = ((cellCenterFrag - 0.5 * res) / minDim) / uScale;
 
-        // Skip computation outside outer black hole boundary
-        if (length(cellUV) > 0.85) {
+        // Skip computation outside outer black hole boundary (wide expanse)
+        if (length(cellUV) > 0.95) {
           gl_FragColor = vec4(0.0);
           return;
         }
@@ -276,24 +276,28 @@ window.addEventListener('DOMContentLoaded', () => {
 
         float luminance = dot(col, vec3(0.299, 0.587, 0.114));
 
-        // Inside the event horizon void: pitch-black empty dots
-        if (isCaptured && luminance < 0.08) {
-          gl_FragColor = vec4(0.0);
-          return;
-        }
-
         // Dot radius modulated by relativistic energy & audio pulse
         float audioPulse = 1.0 + iAudio * 0.25;
-        float dotRadius = clamp(sqrt(luminance) * 0.44 * audioPulse, 0.0, 0.46);
+        float dotRadius = clamp(sqrt(luminance) * 0.42 * audioPulse, 0.0, 0.48);
 
-        // Circular dot shape with anti-aliased edge (pure clean round dot, no bloom haze)
+        // Circular dot shape with anti-aliased edge
         float dotMask = 0.0;
-        if (dotRadius > 0.02) {
-          dotMask = smoothstep(dotRadius, max(0.0, dotRadius - 0.06), d);
+        float bloom = 0.0;
+
+        if (dotRadius > 0.01) {
+          dotMask = smoothstep(dotRadius, max(0.0, dotRadius - 0.08), d);
+          bloom = exp(-d * 3.8) * luminance * 0.35;
         }
 
-        vec3 finalDotColor = col * (dotMask * 1.35);
-        float alpha = clamp(dotMask, 0.0, 1.0);
+        // Inside the event horizon void: pitch-black empty dots
+        if (isCaptured && luminance < 0.1) {
+          col = vec3(0.002, 0.002, 0.004);
+          dotMask = 0.0;
+          bloom = 0.0;
+        }
+
+        vec3 finalDotColor = col * (dotMask * 1.35 + bloom);
+        float alpha = clamp(dotMask + bloom * 1.5, 0.0, 1.0);
 
         gl_FragColor = vec4(finalDotColor, alpha);
       }
