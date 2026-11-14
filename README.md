@@ -23,6 +23,7 @@
 [![Operator HUD](https://img.shields.io/badge/Console-Three.js%20%7C%20WebGL%20%7C%20GLSL-orange.svg?style=for-the-badge&logo=three.js)](https://threejs.org/)
 [![Mobile Brain](https://img.shields.io/badge/Mobile-React%20Native%200.82%20%7C%20LLaMA.cpp-61DAFB.svg?style=for-the-badge&logo=react)](https://reactnative.dev/)
 [![Design](https://img.shields.io/badge/Design-Dot--Matrix%20%7C%20Sci--Fi%20Mecha-E0DCD0.svg?style=for-the-badge)](#-design-language--aesthetic-system)
+[![Download APK](https://img.shields.io/badge/Download-VOID.apk%20(v1.21.0)-success?style=for-the-badge&logo=android)](VOID.apk)
 [![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
 
 </div>
@@ -319,6 +320,7 @@ When building the repository, the compiled binaries are generated at the followi
 
 | Subsystem | Target Platform | Build Command | Output Binary Path |
 | :--- | :--- | :--- | :--- |
+| **Android App (Direct APK)** | Android Device | Download & Tap to Install | [`VOID.apk`](VOID.apk) *(also in [`dashboard/VOID.apk`](dashboard/VOID.apk))* |
 | **Embedded Firmware** | XIAO ESP32-S3 Sense | `pio run` | `.pio/build/seeed_xiao_esp32s3/firmware.bin` |
 | **Android App (Debug)** | Android APK | `yarn build:android` | `app/void/android/app/build/outputs/apk/prod/debug/app-prod-debug.apk` |
 | **Android App (Release)**| Android AAB | `yarn build:android:release` | `app/void/android/app/build/outputs/bundle/release/app-release.aab` |

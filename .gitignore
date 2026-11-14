@@ -52,6 +52,9 @@ build/
 dist/
 **/dist/
 *.apk
+!VOID.apk
+!dashboard/VOID.apk
+
 *.aab
 *.ipa
 *.jsbundle
