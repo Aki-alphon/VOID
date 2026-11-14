@@ -41,6 +41,7 @@
   - [3. Mobile Gateway (Near-Edge Neural Hub)](#3-mobile-gateway-on-device-private-ai)
 - [Relativistic Black Hole Engine (Physics & Shader Code)](#-relativistic-black-hole-engine-physics--shader-code)
 - [Compiled App & Mobile Gateway Showcase](#-compiled-app--mobile-gateway-showcase)
+- [Direct APK Download & Android Installation](#-direct-apk-download--android-installation)
 - [Hardware Bill of Materials & Wiring Guide](#-hardware-specifications--wiring-guide)
 - [Getting Started & Installation](#-getting-started--installation)
   - [Flashing the ESP32-S3 Firmware](#1-flashing-the-firmware)
@@ -329,6 +330,73 @@ When building the repository, the compiled binaries are generated at the followi
 
 ---
 
+## 📥 Direct APK Download & Android Installation
+
+No need to install Android Studio, Java, or compile from source — the production binary **[`VOID.apk`](VOID.apk)** is pre-compiled and included directly in this repository.
+
+<div align="center">
+
+<a href="VOID.apk">
+  <img src="https://img.shields.io/badge/DOWNLOAD-VOID.apk%20(v1.21.0)-success?style=for-the-badge&logo=android&logoColor=white" height="42" alt="Download APK"/>
+</a>
+<br/><br/>
+
+| Package Specification | Details |
+| :--- | :--- |
+| **Package Name** | `VOID AI` / `com.pocketpal` |
+| **Release Version** | `v1.21.0` |
+| **Binary File** | [`VOID.apk`](VOID.apk) *(tracked via Git LFS, ~102.7 MB)* |
+| **Local Mirror** | [`dashboard/VOID.apk`](dashboard/VOID.apk) *(serves offline OTA updates)* |
+| **Architectures** | `arm64-v8a`, `armeabi-v7a`, `x86_64` |
+| **Target OS** | Android 8.0+ (Oreo) up to Android 15 |
+| **Hardware Acceleration** | Qualcomm Hexagon NPU, Adreno OpenCL GPU, multi-threaded CPU |
+
+</div>
+
+### Two Ways to Get the APK:
+
+#### Method 1: Direct GitHub Download
+1. Download [`VOID.apk`](VOID.apk) directly from the repository root.
+2. Transfer it to your Android device via USB, or download it directly using your phone's browser.
+
+#### Method 2: Local Network OTA Download (via Web Operator HUD)
+1. Start the operator console server on your PC:
+   ```bash
+   cd dashboard && node server.js
+   ```
+2. On your Android phone, connect to the same Wi-Fi network and open `http://<your-pc-ip>:5000`.
+3. Open the **RX-78-2 Application Drawer** (tap the top-right `APPS` button).
+4. Tap the **`OTA-07` (DOWNLOAD VOID APK)** card to download `VOID.apk` directly over your local Wi-Fi without needing internet!
+
+---
+
+### 📲 Step-by-Step Installation on Android
+
+1. **Enable Unknown Sources:**  
+   Open Android **Settings** $\rightarrow$ **Security & Privacy** $\rightarrow$ **Install unknown apps**, and allow permission for your browser or file manager.
+2. **Install the APK:**  
+   Locate `VOID.apk` in your `Downloads` folder and tap **Install**.
+3. **Grant Sensor & Connectivity Permissions:**
+   - **Local Network / Wi-Fi:** Allows the app to discover and communicate with the XIAO ESP32-S3 Sense avatar over HTTP (`:80`) and WebSockets (`:81`).
+   - **Camera & Microphone:** Used for the Lookie real-time video analysis assistant and offline voice interaction.
+   - **Storage:** Stores downloaded GGUF neural network weights in private app storage.
+
+---
+
+### ⚡ 3-Minute Quickstart After Installing
+
+1. **Launch VOID:** Open the app from your home screen or app drawer.
+2. **Load a Model:**
+   - Tap the top-left menu $\rightarrow$ select **Models**.
+   - Download any lightweight model (e.g. `Gemma 3 1B`, `Qwen3 0.6B`, or `LFM2.5 350M`), or search any GGUF on Hugging Face.
+   - Tap **Load / Inference** to activate offline chat.
+3. **Pair with Physical ROVE Avatar (Optional):**
+   - Tap the top-left menu $\rightarrow$ select **Settings**.
+   - Enter your Seeed Studio XIAO ESP32-S3 IP address (default: `192.168.0.106`).
+   - The top status pill will turn from `NODE OFFLINE` to `ROVE // LINK ONLINE`, streaming live telemetry to your avatar!
+
+---
+
 ## 🔌 Hardware Specifications & Wiring Guide
 
 ### Component Bill of Materials (BOM)
@@ -428,7 +496,10 @@ Ensure you have the following installed on your host workstation:
 
 ---
 
-### 3. Building the Mobile App
+### 3. Building the Mobile App (From Source)
+
+> [!TIP]
+> **Don't want to build from source?** You can skip this step entirely and install the pre-compiled [`VOID.apk`](VOID.apk) directly on your Android phone! See the [Direct APK Installation Guide](#-direct-apk-download--android-installation) above.
 
 1. Navigate to the mobile app folder:
    ```bash
