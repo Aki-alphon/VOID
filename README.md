@@ -60,7 +60,7 @@
 2. **Near-Edge Neural Hub (Android/iOS Gateway):** An on-device mobile AI runtime powered by **React Native**, **LLaMA.cpp (`llama.rn`)**, **ONNX Runtime**, and local neural TTS. Operates with an OpenClaw-inspired **Heartbeat Engine**, **Markdown Memory Store** (`SOUL.md`, `MEMORY.md`), and **Ghost Finger** intent automation.
 3. **Cinematic Neural Operator HUD (WebGL Console):** A zero-dependency Node.js console rendering a ray-traced **Kerr metric relativistic black hole accretion disk** (`ghostty_blackhole.glsl` & Three.js), high-frequency bi-directional WebSockets, 16-band audio spectrum analyzer, and **HKO-Type PPI CRT radar** with WiFi RF proximity sensing.
 
-Designed with the minimalist dot-matrix typography of **Nothing OS** (`Ndot-57`, `NType-82`), raw `#F800` Nothing Red, and iconic **Gundam RX-78-2** mobile suit livery (`#7A96B2`, `#E5A21E`, `#C86676`).
+Designed with the minimalist dot-matrix typography 
 
 ---
 
