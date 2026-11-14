@@ -2,6 +2,8 @@
 
 <div align="center">
 
+<img src="_.jpeg" alt="Project VOID OS Logo" width="130" style="border-radius: 26px; box-shadow: 0 8px 24px rgba(0,0,0,0.6); margin-bottom: 8px;" />
+
 ```
  __      __ _____  _____  _____    ____    _____ 
  \ \    / // __  \|_   _||  __ \  / __ \  / ____|
@@ -36,6 +38,8 @@
   - [1. VOID OS Firmware (Far-Edge Hardware Avatar)](#1-void-os-firmware-xiao-esp32-s3-sense)
   - [2. Neural Operator HUD (Web Console & WebGL Engine)](#2-neural-operator-hud-web-dashboard)
   - [3. Mobile Gateway (Near-Edge Neural Hub)](#3-mobile-gateway-on-device-private-ai)
+- [Relativistic Black Hole Engine (Physics & Shader Code)](#-relativistic-black-hole-engine-physics--shader-code)
+- [Compiled App & Mobile Gateway Showcase](#-compiled-app--mobile-gateway-showcase)
 - [Hardware Bill of Materials & Wiring Guide](#-hardware-specifications--wiring-guide)
 - [Getting Started & Installation](#-getting-started--installation)
   - [Flashing the ESP32-S3 Firmware](#1-flashing-the-firmware)
@@ -60,7 +64,7 @@
 2. **Near-Edge Neural Hub (Android/iOS Gateway):** An on-device mobile AI runtime powered by **React Native**, **LLaMA.cpp (`llama.rn`)**, **ONNX Runtime**, and local neural TTS. Operates with an OpenClaw-inspired **Heartbeat Engine**, **Markdown Memory Store** (`SOUL.md`, `MEMORY.md`), and **Ghost Finger** intent automation.
 3. **Cinematic Neural Operator HUD (WebGL Console):** A zero-dependency Node.js console rendering a ray-traced **Kerr metric relativistic black hole accretion disk** (`ghostty_blackhole.glsl` & Three.js), high-frequency bi-directional WebSockets, 16-band audio spectrum analyzer, and **HKO-Type PPI CRT radar** with WiFi RF proximity sensing.
 
-Designed with the minimalist dot-matrix typography 
+Designed with the minimalist dot-matrix typography of **Nothing OS** (`Ndot-57`, `NType-82`), raw `#F800` Nothing Red, and iconic **Gundam RX-78-2** mobile suit livery (`#7A96B2`, `#E5A21E`, `#C86676`).
 
 ---
 
@@ -160,6 +164,161 @@ Located in [`app/void/`](file:///app/void/), the mobile application acts as the 
 - **Heartbeat Engine:** Uses Android `WorkManager` and Kotlin coroutines to execute scheduled cognitive jobs from `HEARTBEAT.md` without battery drain.
 - **Dynamic Memory System:** Reads `SOUL.md` (persona/instructions) and `MEMORY.md` (append-only user fact store) before each reasoning loop.
 - **Ghost Finger Executor:** Directs actions using implicit Android Intents and the Accessibility API to control apps (e.g., WhatsApp, calendar, navigation) based on tool calls returned by the LLM.
+
+---
+
+## 🕳️ Relativistic Black Hole Engine (Physics & Shader Code)
+
+Project VOID features a mathematically rigorous, geodesic-traced black hole simulation modeled after the Schwarzschild metric and general relativity. Unlike games or basic visualizers that paint a static 2D texture, VOID integrates the **Binet-form photon trajectory acceleration** per pixel in real time.
+
+### 1. General Relativity & Mathematical Derivation
+
+In Schwarzschild spacetime, a light ray (null geodesic) orbiting a mass with Schwarzschild radius $r_s$ experiences relativistic gravitational bending governed by the Binet equation:
+
+$$\frac{d^2 u}{d\phi^2} + u = \frac{3}{2} r_s u^2 \quad \text{where } u = \frac{1}{r}$$
+
+Differentiating with respect to affine parameter yields the exact **Binet 3D photon acceleration** vector:
+
+$$\mathbf{a} = -\frac{3}{2} \frac{h^2 \mathbf{x}}{r^5}$$
+
+Where:
+- $\mathbf{x}$ is the photon position relative to the singularity.
+- $h = |\mathbf{x} \times \mathbf{v}|$ is the conserved specific angular momentum of the photon.
+- $r = \|\mathbf{x}\|$ is the radial distance.
+- Light rays with impact parameter $b < b_{\text{crit}} = \frac{3\sqrt{3}}{2} r_s \approx 2.598\, r_s$ cross the event horizon into the infinite shadow.
+
+#### Relativistic Beaming & Shakura-Sunyaev Temperature Profile
+As Keplerian gas orbits at velocity $\beta = v/c$, the received radiation is shifted by gravitational time dilation and the relativistic Doppler effect:
+
+$$g = \frac{\sqrt{1 - \frac{1.5 r_s}{r}}}{1 - \boldsymbol{\beta} \cdot \hat{\mathbf{k}}}$$
+
+The local effective temperature of the thin accretion disk follows the **Shakura-Sunyaev** radial profile:
+
+$$T(r) \propto r^{-3/4} \left(1 - \sqrt{\frac{r_{\text{in}}}{r}}\right)^{1/4}$$
+
+Observed intensity scales as $I_{\text{obs}} = g^4 I_{\text{emit}}$, producing the signature asymmetric brightness where the gas moving toward the observer shines brilliantly while receding gas dims.
+
+---
+
+### 2. GLSL Geodesic Ray-Tracing Shader Kernel
+
+From [`ghostty_blackhole.glsl`](file:///ghostty_blackhole.glsl) and [`dashboard/singularity.js`](file:///dashboard/singularity.js), this symplectic leapfrog (kick-drift-kick) numerical integrator runs for each pixel:
+
+```glsl
+// ==================== NEAR FIELD: TRACE SCHWARZSCHILD GEODESIC ====================
+// Parallel photon rays enter from the virtual camera at +Z towards the origin (r_s = 1)
+vec3  x  = vec3(pr, Z0);              // Initial ray position (impact plane)
+vec3  v  = vec3(0.0, 0.0, -1.0);       // Collimated ray velocity
+float h2 = dot(pr, pr);               // Conserved specific angular momentum h^2 = |x x v|^2
+
+vec3  emitc    = vec3(0.0);           // Accumulated accretion disk radiance (HDR)
+float trans    = 1.0;                 // Transmittance through the absorbing gas
+bool  captured = false;               // Event horizon crossing flag
+float sPrev    = dot(x, n);           // Distance to accretion disk plane
+vec3  xPrev    = x;
+
+for (int i = 0; i < N_STEPS; i++) {
+    float r2 = dot(x, x);
+    if (r2 < 1.0) { captured = true; break; }  // Trapped inside event horizon (r < r_s)
+    if (x.z < -Z0 && v.z < 0.0) break;         // Ray escaped out the back to infinity
+    if (r2 > 4.0 * Z0 * Z0) break;             // Ray flung outward sideways
+
+    float r  = sqrt(r2);
+    // Adaptive step size: ultra-fine near photon sphere (r = 1.5 r_s), coarse far out
+    float dt = clamp(0.16 * r, 0.03, 1.5);
+
+    // Symplectic Leapfrog Integrator (Kick-Drift-Kick) preserves energy and orbit stability
+    vec3 a = -1.5 * h2 * x / (r2 * r2 * r);    // Binet photon acceleration: a = -1.5 * h^2 * x / r^5
+    v += a * (0.5 * dt);
+    x += v * dt;
+    r2 = dot(x, x);
+    r  = sqrt(r2);
+    a  = -1.5 * h2 * x / (r2 * r2 * r);
+    v += a * (0.5 * dt);
+
+    // ---- Thin-Disk Intersection: Ray pierced the accretion disk plane ----
+    float s = dot(x, n);
+    if (s * sPrev < 0.0 && trans > 0.02) {
+        float tc = sPrev / (sPrev - s);
+        vec3  xc = mix(xPrev, x, tc);
+        float rc = length(xc);
+
+        if (rc > rin && rc < rout) {
+            // Relativistic Doppler beaming + gravitational redshift:
+            // g = sqrt(1 - 1.5 / r) / (1 + beta * cos(theta))
+            float gloc = sqrt(max(1.0 - 1.5 / rc, 0.02));
+            vec3  gasdir = normalize(cross(n, xc)) * sdir;
+            float beta   = clamp(inversesqrt(max(2.0 * (rc - 1.0), 0.2)), 0.0, 0.99);
+            float g      = gloc / max(1.0 + beta * dot(gasdir, normalize(v)), 0.05);
+
+            // Shakura-Sunyaev temperature profile mapped through blackbody radiation
+            float xpr   = max(1.0 - sqrt(rin / rc), 0.0);
+            float tprof = pow(rin / rc, 0.75) * pow(xpr, 0.25) / 0.488;
+            vec3  color = blackbody(L.temp * tprof * g);
+
+            // Accumulate radiative transfer with relativistic beaming intensity g^N
+            float intensity = pow(g, L.beam) * L.gain;
+            emitc += trans * color * intensity;
+            trans *= (1.0 - L.opac);
+        }
+    }
+    sPrev = s;
+    xPrev = x;
+}
+```
+
+---
+
+### 3. Bare-Metal Microcontroller Implementation (788-Point Geodesic Matrix)
+
+To run this simulation smoothly on the **ESP32-S3 microcontroller** with an SPI TFT without dropping frames, the geodesic points are precomputed using the exact ray-integration algorithm and mapped to a 788-point PROGMEM dot array ([`include/singularity_dots.h`](file:///include/singularity_dots.h)):
+
+```cpp
+// Precomputed Binet Schwarzschild Geodesic Ray Integration (36.5 deg relativistic tilt)
+struct SingularityMatrixDot {
+  int16_t x;          // Screen X coordinate (0..320)
+  int16_t y;          // Screen Y coordinate (0..240)
+  uint8_t size;       // Dot phosphor radius
+  uint16_t baseColor; // 16-bit RGB565 Blackbody Color
+  float phi;          // Geodesic orbital phase angle
+  float r;            // Normalized event horizon distance
+};
+
+static const SingularityMatrixDot SINGULARITY_DOTS[788] PROGMEM = {
+  {77, 56, 1, 0x6286, 2.485f, 0.475f},
+  {81, 56, 1, 0x7309, 2.461f, 0.460f},
+  // ... 788 authentic Schwarzschild geodesic coordinate dots ...
+};
+```
+
+During runtime, [`src/display_hud.cpp`](file:///src/display_hud.cpp) animates 16 rotating orbital swirl knots around the event horizon, computing live relativistic Doppler color shifts and reacting dynamically to screen touches with energy flares.
+
+---
+
+## 📱 Compiled App & Mobile Gateway Showcase
+
+The **VOID Mobile Gateway Hub** pairs your smartphone's CPU/GPU/NPU directly to the ESP32-S3 physical avatar. Here is the compiled application, launcher branding, and offline model execution UI:
+
+<div align="center">
+
+| App Icon / Logo | On-Device Neural Chat UI | Offline GGUF Model Management |
+| :---: | :---: | :---: |
+| <img src="_.jpeg" alt="VOID App Logo" width="160" style="border-radius: 28px; box-shadow: 0 4px 16px rgba(0,0,0,0.5);"/> | <img src="app/void/assets/images%20and%20logos/screenshots/Android/Screenshot_Chat_1.png" alt="Compiled Chat Screen" width="220" style="border-radius: 12px;"/> | <img src="app/void/assets/images%20and%20logos/screenshots/Android/Screenshot_Models_1.png" alt="Compiled Models Screen" width="220" style="border-radius: 12px;"/> |
+| **Project VOID App Branding**<br/>`PocketPal-512x512.png` / `_.jpeg` | **Offline Local Inference**<br/>GGUF models via `llama.rn` | **Hugging Face Hub**<br/>1-click download & GGUF loading |
+
+</div>
+
+### Binary Build Outputs After Compiling
+
+When building the repository, the compiled binaries are generated at the following locations:
+
+| Subsystem | Target Platform | Build Command | Output Binary Path |
+| :--- | :--- | :--- | :--- |
+| **Embedded Firmware** | XIAO ESP32-S3 Sense | `pio run` | `.pio/build/seeed_xiao_esp32s3/firmware.bin` |
+| **Android App (Debug)** | Android APK | `yarn build:android` | `app/void/android/app/build/outputs/apk/prod/debug/app-prod-debug.apk` |
+| **Android App (Release)**| Android AAB | `yarn build:android:release` | `app/void/android/app/build/outputs/bundle/release/app-release.aab` |
+| **iOS App (Simulator)** | iOS Simulator | `yarn ios:build` | `app/void/ios/build/PocketPal.app` |
+| **Web Operator HUD** | WebGL / Node.js | `node server.js` | `http://localhost:5000` (Zero compile needed) |
 
 ---
 
