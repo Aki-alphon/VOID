@@ -297,14 +297,19 @@ During runtime, [`src/display_hud.cpp`](file:///src/display_hud.cpp) animates 16
 
 ## 📱 Compiled App & Mobile Gateway Showcase
 
-The **VOID Mobile Gateway Hub** pairs your smartphone's CPU/GPU/NPU directly to the ESP32-S3 physical avatar. Here is the compiled application, launcher branding, and offline model execution UI:
+The **VOID Mobile Gateway Hub** pairs your smartphone's CPU/GPU/NPU directly to the ESP32-S3 physical avatar, running quantized on-device neural models completely offline with zero cloud dependency.
 
 <div align="center">
 
-| App Icon / Logo | On-Device Neural Chat UI | Offline GGUF Model Management |
+| 🌌 Kerr Core Hero HUD | 🛰️ Neural Operations Hub | 💬 Active Offline Chat |
 | :---: | :---: | :---: |
-| <img src="_.jpeg" alt="VOID App Logo" width="160" style="border-radius: 28px; box-shadow: 0 4px 16px rgba(0,0,0,0.5);"/> | <img src="app/void/assets/images%20and%20logos/screenshots/Android/Screenshot_Chat_1.png" alt="Compiled Chat Screen" width="220" style="border-radius: 12px;"/> | <img src="app/void/assets/images%20and%20logos/screenshots/Android/Screenshot_Models_1.png" alt="Compiled Models Screen" width="220" style="border-radius: 12px;"/> |
-| **Project VOID App Branding**<br/>`PocketPal-512x512.png` / `_.jpeg` | **Offline Local Inference**<br/>GGUF models via `llama.rn` | **Hugging Face Hub**<br/>1-click download & GGUF loading |
+| <img src="assets/screenshots/01_kerr_core_home.png" alt="Kerr Core Home" width="220" style="border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.4);"/> | <img src="assets/screenshots/02_neural_operations_hub.png" alt="Neural Operations Hub" width="220" style="border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.4);"/> | <img src="assets/screenshots/03_active_chat_inference.png" alt="Active Chat Inference" width="220" style="border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.4);"/> |
+| **Kerr Singularity Core**<br/>WB-102 Core & Status Telemetry | **Mecha Operations Drawer**<br/>DAT-03, OPT-01, TLM-05, NAV-04, CFG-06 | **On-Device Inference**<br/>Gemma 3 1B with ROVE Node Link |
+
+| ⚙️ Active Model Manager | 🤖 ROVE Hardware Companion | 🔍 Hugging Face Explorer |
+| :---: | :---: | :---: |
+| <img src="assets/screenshots/04_active_model_manager.png" alt="Model Manager" width="220" style="border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.4);"/> | <img src="assets/screenshots/05_rove_node_pals.png" alt="ROVE Companion Node" width="220" style="border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.4);"/> | <img src="assets/screenshots/06_huggingface_search.png" alt="Hugging Face Explorer" width="220" style="border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.4);"/> |
+| **Model Quantization Engine**<br/>Active Inference, VRAM Offload & GGUF | **ROVE Companion Pals**<br/>Hardware Node Pairing & Vision AI | **Direct Model Search**<br/>1-Click GGUF Download from Hub |
 
 </div>
 

@@ -3,7 +3,10 @@
 # Covers: PlatformIO (ESP32), React Native (Android / iOS), Node.js, Web & OS
 # ==============================================================================
 
-# --- Operating System ---
+# WhatsApp temporary uploads
+WhatsApp Image *.jpeg
+WhatsApp Image *.jpg
+
 .DS_Store
 .DS_Store?
 ._*
